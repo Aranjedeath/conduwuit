@@ -148,6 +148,8 @@ pub struct Config {
 	pub presence_offline_timeout_s: u64,
 
 	#[serde(default = "true_fn")]
+	pub allow_outgoing_public_read_receipts: bool,
+	#[serde(default = "true_fn")]
 	pub allow_incoming_read_receipts: bool,
 
 	#[serde(default)]
@@ -295,6 +297,10 @@ impl fmt::Display for Config {
 			(
 				"Allow local presence requests (updates)",
 				&self.allow_local_presence.to_string(),
+			),
+			(
+				"Allow outgoing remote public read receipts",
+				&self.allow_outgoing_public_read_receipts.to_string(),
 			),
 			(
 				"Allow incoming remote read receipts",

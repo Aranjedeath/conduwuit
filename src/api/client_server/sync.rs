@@ -21,6 +21,7 @@ use ruma::{
 	},
 	events::{
 		presence::PresenceEvent,
+		receipt::{ReceiptThread, ReceiptType},
 		room::member::{MembershipState, RoomMemberEventContent},
 		StateEventType, TimelineEventType,
 	},
@@ -862,6 +863,42 @@ async fn load_joined_room(
 		.filter_map(std::result::Result::ok) // Filter out buggy events
 		.map(|(_, _, v)| v)
 		.collect();
+
+	if services().rooms.edus.read_receipt.last_privateread_update(sender_user, room_id).unwrap_or(0) > since {
+		if let Ok(event_id) = services().rooms.short.get_eventid_from_short(
+			services()
+				.rooms
+				.edus
+				.read_receipt
+				.private_read_get(room_id, sender_user)?
+				.expect("User had a last read private receipt update but no receipt?"),
+		) {
+			let mut user_receipts = BTreeMap::new();
+			user_receipts.insert(
+				sender_user.to_owned(),
+				ruma::events::receipt::Receipt {
+					ts: None,
+					thread: ReceiptThread::Unthreaded,
+				},
+			);
+
+			let mut receipts = BTreeMap::new();
+			receipts.insert(ReceiptType::ReadPrivate, user_receipts);
+
+			let mut receipt_content = BTreeMap::new();
+			receipt_content.insert((*event_id).to_owned(), receipts);
+
+			edus.push(
+				serde_json::from_str(
+					&serde_json::to_string(&ruma::events::SyncEphemeralRoomEvent {
+						content: ruma::events::receipt::ReceiptEventContent(receipt_content),
+					})
+					.expect("Did not get valid JSON?"),
+				)
+				.expect("JSON was somehow invalid despite just being created"),
+			);
+		}
+	};
 
 	if services().rooms.edus.typing.last_typing_update(room_id).await? > since {
 		edus.push(

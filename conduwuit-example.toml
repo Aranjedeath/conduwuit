@@ -385,9 +385,14 @@ url_preview_check_root_domain = false
 # Config option to control how many seconds before presence updates that you are offline. Defaults to 30 minutes.
 #presence_offline_timeout_s = 1800
 
+# Config option to control whether we should send remote outtgoing public read receipts.
+# Defaults to true.
+#allow_outgoing_public_read_receipts = true
+
 # Config option to control whether we should receive remote incoming read receipts.
 # Defaults to true.
 #allow_incoming_read_receipts = true
+
 
 
 # Other options not in [global]:

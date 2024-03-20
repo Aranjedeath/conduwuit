@@ -3,7 +3,9 @@ use ruma::{OwnedRoomId, OwnedUserId, RoomId, UserId};
 use crate::{database::KeyValueDatabase, service, services, utils, Error, Result};
 
 impl service::rooms::user::Data for KeyValueDatabase {
-	fn reset_notification_counts(&self, user_id: &UserId, room_id: &RoomId) -> Result<()> {
+	fn update_notification_counts(
+		&self, user_id: &UserId, room_id: &RoomId, notification_count: u64, highlight_count: u64,
+	) -> Result<()> {
 		let mut userroom_id = user_id.as_bytes().to_vec();
 		userroom_id.push(0xFF);
 		userroom_id.extend_from_slice(room_id.as_bytes());
@@ -11,8 +13,8 @@ impl service::rooms::user::Data for KeyValueDatabase {
 		roomuser_id.push(0xFF);
 		roomuser_id.extend_from_slice(user_id.as_bytes());
 
-		self.userroomid_notificationcount.insert(&userroom_id, &0_u64.to_be_bytes())?;
-		self.userroomid_highlightcount.insert(&userroom_id, &0_u64.to_be_bytes())?;
+		self.userroomid_notificationcount.insert(&userroom_id, &notification_count.to_be_bytes())?;
+		self.userroomid_highlightcount.insert(&userroom_id, &highlight_count.to_be_bytes())?;
 
 		self.roomuserid_lastnotificationread.insert(&roomuser_id, &services().globals.next_count()?.to_be_bytes())?;
 
