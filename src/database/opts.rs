@@ -56,7 +56,7 @@ pub(crate) fn db_options(config: &Config, env: &mut Env, row_cache: &Cache, col_
 	opts.set_row_cache(row_cache);
 
 	// Buffers
-	opts.set_write_buffer_size(2 * 1024 * 1024);
+	opts.set_write_buffer_size(4 * 1024 * 1024);
 	opts.set_max_write_buffer_number(2);
 	opts.set_min_write_buffer_number(1);
 
