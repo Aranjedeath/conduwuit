@@ -353,7 +353,7 @@ pub(crate) async fn send_transaction_message_route(
 				}
 			},
 			Edu::_Custom(ref _custom) => {
-				debug_warn!(?edu, "received custom/unknown EDU");
+				debug_warn!(?body.edus, "received custom/unknown EDU");
 			},
 		}
 	}
