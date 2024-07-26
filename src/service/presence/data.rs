@@ -58,15 +58,15 @@ impl Data {
 		};
 
 		// tighten for state flicker?
-		if !state_changed && last_active_ts <= last_last_active_ts {
-			debug_warn!(
-				"presence spam {:?} last_active_ts:{:?} <= {:?}",
-				user_id,
-				last_active_ts,
-				last_last_active_ts
-			);
-			return Ok(());
-		}
+		// if !state_changed && last_active_ts <= last_last_active_ts {
+		// 	debug_warn!(
+		// 		"presence spam {:?} last_active_ts:{:?} <= {:?}",
+		// 		user_id,
+		// 		last_active_ts,
+		// 		last_last_active_ts
+		// 	);
+		// 	return Ok(());
+		// }
 
 		let status_msg = if status_msg.as_ref().is_some_and(String::is_empty) {
 			None
