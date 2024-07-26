@@ -30,6 +30,15 @@ where
 		return Err!(Config("allow_federation", "Federation is disabled."));
 	}
 
+	if services()
+		.globals
+		.config
+		.forbidden_remote_server_names
+		.contains(&dest.to_owned())
+	{
+		return Err!(Request(Forbidden("Federation with this homeserver is not allowed.")));
+	}
+
 	let actual = resolve::get_actual_dest(dest).await?;
 	let request = prepare::<T>(dest, &actual, req).await?;
 	execute::<T>(client, dest, &actual, request).await

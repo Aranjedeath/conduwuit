@@ -204,6 +204,16 @@ async fn auth_server(request: &mut Request, json_body: &Option<CanonicalJsonValu
 		})?;
 
 	let origin = &x_matrix.origin;
+
+	if services()
+		.globals
+		.config
+		.forbidden_remote_server_names
+		.contains(origin)
+	{
+		return Err!(Request(Forbidden("Federation with this homeserver is not allowed.")));
+	}
+
 	let signatures =
 		BTreeMap::from_iter([(x_matrix.key.clone(), CanonicalJsonValue::String(x_matrix.sig.to_string()))]);
 	let signatures = BTreeMap::from_iter([(
