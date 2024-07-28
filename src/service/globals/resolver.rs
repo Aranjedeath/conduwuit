@@ -51,6 +51,7 @@ impl Resolver {
 
 			if config.query_over_tcp_only {
 				ns.protocol = hickory_resolver::config::Protocol::Tcp;
+				opts.edns0 = true;
 			}
 
 			ns.trust_negative_responses = !config.query_all_nameservers;
@@ -77,7 +78,6 @@ impl Resolver {
 			_ => hickory_resolver::config::LookupIpStrategy::Ipv4thenIpv6,
 		};
 		opts.authentic_data = false;
-		opts.edns0 = true;
 		opts.use_hosts_file = false;
 
 		let resolver = Arc::new(TokioAsyncResolver::tokio(conf, opts));
